@@ -37,8 +37,7 @@ go-devs-the-farmer/
 ├── index.html          # Página inicial (GitHub Pages)
 ├── README.md           # Este arquivo
 └── docs/
-    ├── jogar.html      # Jogo principal
-    └── README.md       # Documentação detalhada
+    └── jogar.html      # Jogo principal
 ```
 
 ## 🛠️ Tecnologias Utilizadas
@@ -129,5 +128,4 @@ Desenvolvido com ❤️ para praticar lógica e programação web.
 
 ⭐ Se você gostou do projeto, considere dar uma estrela! ⭐
 
-Para mais detalhes sobre o jogo, consulte o [README em docs/](docs/README.md).
 
