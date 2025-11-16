@@ -1,4 +1,4 @@
-# 🌾 O Fazendeiro, O Lobo, O Cordeiro e O Feno
+# 🌾 O Fazendeiro, o Lobo, o Cordeiro e o Feno
 
 Um jogo interativo de lógica baseado no clássico problema de travessia do rio, desenvolvido com HTML, CSS e JavaScript puro.
 
