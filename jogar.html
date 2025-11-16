@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Fazendeiro, O Lobo, O Cordeiro e O Feno</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .game-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .bank {
+            flex: 1;
+            min-height: 350px;
+            border: 3px solid #4a5568;
+            border-radius: 15px;
+            padding: 20px;
+            background: linear-gradient(to bottom, #48bb78 0%, #38a169 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .bank.left {
+            margin-right: 20px;
+        }
+
+        .bank.right {
+            margin-left: 20px;
+        }
+
+        .bank-label {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #2d3748;
+            font-size: 0.9em;
+        }
+
+        .river {
+            width: 120px;
+            min-height: 350px;
+            background: linear-gradient(to bottom, #3182ce 0%, #2c5282 100%);
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .river::before {
+            content: '🌊';
+            position: absolute;
+            font-size: 3em;
+            opacity: 0.3;
+        }
+
+        .boat {
+            width: 100px;
+            height: 80px;
+            background: #8b4513;
+            border-radius: 10px 10px 50% 50%;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .boat:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .boat::before {
+            content: '⛵';
+            position: absolute;
+            top: -15px;
+            font-size: 1.5em;
+        }
+
+        .character {
+            font-size: 2.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 5px;
+        }
+
+        .character:hover {
+            transform: scale(1.2);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .character.in-boat {
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid #ffd700;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .message {
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-weight: bold;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message.info {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .message.error {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .message.success {
+            background: #c6f6d5;
+            color: #22543d;
+            font-size: 1.2em;
+        }
+
+        .rules {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .rules h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .rules ul {
+            color: #4a5568;
+            margin-left: 20px;
+        }
+
+        .rules li {
+            margin: 5px 0;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .celebrate {
+            animation: celebrate 0.5s ease infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(197, 48, 48, 0.7); }
+            50% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(197, 48, 48, 0); }
+        }
+
+        .character.danger {
+            background: rgba(197, 48, 48, 0.5);
+            border: 3px solid #c53030;
+            animation: pulse 1s ease infinite;
+        }
+
+        .bank.danger {
+            border-color: #c53030;
+            border-width: 5px;
+            animation: shake 0.5s ease;
+            box-shadow: 0 0 20px rgba(197, 48, 48, 0.5);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal h2 {
+            color: #c53030;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .modal p {
+            color: #4a5568;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-modal {
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            border: none;
+        }
+
+        .btn-modal.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-modal.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animações de Vitória */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg) scale(1); }
+            to { transform: rotate(360deg) scale(1.2); }
+        }
+
+        @keyframes rainbow {
+            0% { color: #ff0000; }
+            16% { color: #ff7f00; }
+            33% { color: #ffff00; }
+            50% { color: #00ff00; }
+            66% { color: #0000ff; }
+            83% { color: #4b0082; }
+            100% { color: #9400d3; }
+        }
+
+        .character.celebrate {
+            animation: bounce 0.6s ease infinite, rotate 2s linear infinite;
+        }
+
+        .bank.celebrate {
+            background: linear-gradient(to bottom, #48bb78 0%, #38a169 100%);
+            animation: celebrate 1s ease infinite;
+            box-shadow: 0 0 30px rgba(72, 187, 120, 0.8);
+        }
+
+        .modal.success h2 {
+            color: #22543d;
+            animation: rainbow 2s linear infinite;
+            font-size: 2.2em;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            top: -10px;
+            animation: confetti-fall linear forwards;
+            z-index: 9999;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(34, 84, 61, 0.1);
+            z-index: 998;
+            pointer-events: none;
+        }
+
+        .fireworks {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: firework 1s ease-out forwards;
+            z-index: 9998;
+        }
+
+        @keyframes firework {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(var(--dx), var(--dy)) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 O Fazendeiro, O Lobo, O Cordeiro e O Feno 🌾</h1>
+        <p class="subtitle">Ajude o fazendeiro a atravessar todos para o outro lado do rio!</p>
+
+        <div class="rules">
+            <h3>📋 Regras do Jogo:</h3>
+            <ul>
+                <li>O barco só pode carregar o fazendeiro e mais um item por vez</li>
+                <li>⚠️ Se o lobo ficar sozinho com o cordeiro, o lobo come o cordeiro!</li>
+                <li>⚠️ Se o cordeiro ficar sozinho com o feno, o cordeiro come o feno!</li>
+                <li>🎯 Objetivo: Leve todos para a margem direita com segurança</li>
+            </ul>
+        </div>
+
+        <div class="game-area">
+            <div class="bank left" id="leftBank">
+                <div class="bank-label">Margem Esquerda</div>
+            </div>
+            <div class="river" id="river">
+                <div class="boat" id="boat"></div>
+            </div>
+            <div class="bank right" id="rightBank">
+                <div class="bank-label">Margem Direita</div>
+            </div>
+        </div>
+
+        <div class="message info" id="message">Clique nos personagens para colocá-los no barco, depois clique em "Atravessar"</div>
+
+        <div class="controls">
+            <button class="btn" id="crossBtn" onclick="crossRiver()">⛵ Atravessar Rio</button>
+            <button class="btn" id="resetBtn" onclick="resetGame()">🔄 Reiniciar Jogo</button>
+        </div>
+    </div>
+
+    <!-- Modal de Game Over -->
+    <div class="modal-overlay" id="gameOverModal">
+        <div class="modal">
+            <h2 id="modalTitle">⚠️ Game Over!</h2>
+            <p id="modalMessage"></p>
+            <div class="modal-buttons">
+                <button class="btn-modal primary" onclick="closeModalAndReset()">🔄 Tentar Novamente</button>
+                <button class="btn-modal secondary" onclick="closeModal()">✖️ Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Vitória -->
+    <div class="modal-overlay" id="victoryModal">
+        <div class="modal success">
+            <h2 id="victoryTitle">🎉 Parabéns! 🎉</h2>
+            <p id="victoryMessage"></p>
+            <div class="modal-buttons">
+                <button class="btn-modal primary" onclick="closeVictoryModalAndReset()">🔄 Jogar Novamente</button>
+                <button class="btn-modal secondary" onclick="closeVictoryModal()">✖️ Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const characters = {
+            farmer: { emoji: '👨‍🌾', name: 'Fazendeiro' },
+            wolf: { emoji: '🐺', name: 'Lobo' },
+            sheep: { emoji: '🐑', name: 'Cordeiro' },
+            hay: { emoji: '🌾', name: 'Feno' }
+        };
+
+        let gameState = {
+            leftBank: ['farmer', 'wolf', 'sheep', 'hay'],
+            rightBank: [],
+            boat: [],
+            boatPosition: 'left', // 'left' or 'right'
+            moves: 0
+        };
+
+        function initGame() {
+            renderGame();
+        }
+
+        function renderGame(dangerChars = [], dangerBank = null) {
+            const leftBankEl = document.getElementById('leftBank');
+            const rightBankEl = document.getElementById('rightBank');
+            const boatEl = document.getElementById('boat');
+
+            // Remover classes de perigo anteriores
+            leftBankEl.classList.remove('danger');
+            rightBankEl.classList.remove('danger');
+
+            // Limpar bancos
+            leftBankEl.innerHTML = '<div class="bank-label">Margem Esquerda</div>';
+            rightBankEl.innerHTML = '<div class="bank-label">Margem Direita</div>';
+            boatEl.innerHTML = '';
+
+            // Renderizar margem esquerda
+            gameState.leftBank.forEach(char => {
+                const isDanger = dangerChars.includes(char) && dangerBank === 'left';
+                const charEl = createCharacterElement(char, false, isDanger);
+                leftBankEl.appendChild(charEl);
+            });
+
+            // Renderizar margem direita
+            gameState.rightBank.forEach(char => {
+                const isDanger = dangerChars.includes(char) && dangerBank === 'right';
+                const charEl = createCharacterElement(char, false, isDanger);
+                rightBankEl.appendChild(charEl);
+            });
+
+            // Renderizar barco
+            gameState.boat.forEach(char => {
+                const charEl = createCharacterElement(char, true, false);
+                boatEl.appendChild(charEl);
+            });
+
+            // Adicionar classe de perigo ao banco problemático
+            if (dangerBank === 'left') {
+                leftBankEl.classList.add('danger');
+            } else if (dangerBank === 'right') {
+                rightBankEl.classList.add('danger');
+            }
+
+            // Atualizar posição do barco visualmente
+            const riverEl = document.getElementById('river');
+            if (gameState.boatPosition === 'right') {
+                riverEl.style.flexDirection = 'row-reverse';
+            } else {
+                riverEl.style.flexDirection = 'row';
+            }
+
+            // Verificar vitória
+            if (gameState.rightBank.length === 4 && gameState.boat.length === 0) {
+                celebrateVictory();
+            }
+        }
+
+        function createCharacterElement(charKey, inBoat = false, isDanger = false) {
+            const char = characters[charKey];
+            const div = document.createElement('div');
+            let className = 'character';
+            if (inBoat) className += ' in-boat';
+            if (isDanger) className += ' danger';
+            div.className = className;
+            div.textContent = char.emoji;
+            div.title = char.name;
+            div.onclick = () => toggleCharacter(charKey, inBoat);
+            return div;
+        }
+
+        function toggleCharacter(charKey, inBoat) {
+            const currentBank = gameState.boatPosition === 'left' ? gameState.leftBank : gameState.rightBank;
+            
+            if (inBoat) {
+                // Remover do barco
+                gameState.boat = gameState.boat.filter(c => c !== charKey);
+                currentBank.push(charKey);
+            } else {
+                // Adicionar ao barco (se houver espaço)
+                if (gameState.boat.length >= 2) {
+                    showMessage('O barco só pode carregar o fazendeiro e mais um item!', 'error');
+                    // Animação de erro no barco
+                    const boatEl = document.getElementById('boat');
+                    boatEl.classList.add('shake');
+                    setTimeout(() => boatEl.classList.remove('shake'), 500);
+                    return;
+                }
+                
+                // Verificar se o fazendeiro está no barco ou na mesma margem
+                const farmerInBoat = gameState.boat.includes('farmer');
+                const farmerOnBank = currentBank.includes('farmer');
+                
+                if (!farmerInBoat && !farmerOnBank) {
+                    showMessage('O fazendeiro precisa estar no barco para movê-lo!', 'error');
+                    // Animação de erro no personagem clicado
+                    const charElements = document.querySelectorAll('.character');
+                    charElements.forEach(el => {
+                        if (el.textContent === characters[charKey].emoji && !el.classList.contains('in-boat')) {
+                            el.classList.add('shake');
+                            setTimeout(() => el.classList.remove('shake'), 500);
+                        }
+                    });
+                    return;
+                }
+
+                // Se não há fazendeiro no barco, adicionar primeiro
+                if (!farmerInBoat && gameState.boat.length === 0) {
+                    const farmerIndex = currentBank.indexOf('farmer');
+                    if (farmerIndex !== -1) {
+                        currentBank.splice(farmerIndex, 1);
+                        gameState.boat.push('farmer');
+                    }
+                }
+
+                // Adicionar o personagem ao barco
+                const charIndex = currentBank.indexOf(charKey);
+                if (charIndex !== -1) {
+                    currentBank.splice(charIndex, 1);
+                    gameState.boat.push(charKey);
+                }
+            }
+
+            renderGame();
+            updateMessage();
+        }
+
+        function crossRiver() {
+            // Verificar se o fazendeiro está no barco
+            if (!gameState.boat.includes('farmer')) {
+                showMessage('O fazendeiro precisa estar no barco para atravessar!', 'error');
+                // Animação de erro
+                const boatEl = document.getElementById('boat');
+                boatEl.classList.add('shake');
+                setTimeout(() => boatEl.classList.remove('shake'), 500);
+                return;
+            }
+
+            // Verificar se há alguém no barco
+            if (gameState.boat.length === 0) {
+                showMessage('O barco precisa ter pelo menos o fazendeiro!', 'error');
+                return;
+            }
+
+            // Mover barco
+            gameState.boatPosition = gameState.boatPosition === 'left' ? 'right' : 'left';
+            gameState.moves++;
+
+            // Mover personagens do barco para a margem de destino
+            const destinationBank = gameState.boatPosition === 'left' ? gameState.leftBank : gameState.rightBank;
+            while (gameState.boat.length > 0) {
+                destinationBank.push(gameState.boat.shift());
+            }
+
+            // Verificar regras de segurança
+            const leftCheck = checkAlone(gameState.leftBank, 'left');
+            const rightCheck = checkAlone(gameState.rightBank, 'right');
+
+            if (leftCheck.error || rightCheck.error) {
+                const errorCheck = leftCheck.error || rightCheck.error;
+                // Mostrar animações e modal
+                showGameOver(errorCheck.message, errorCheck.dangerChars, errorCheck.dangerBank);
+                return;
+            }
+
+            renderGame();
+            updateMessage();
+        }
+
+        function checkAlone(bank, bankName) {
+            const hasFarmer = bank.includes('farmer');
+            const hasWolf = bank.includes('wolf');
+            const hasSheep = bank.includes('sheep');
+            const hasHay = bank.includes('hay');
+
+            // Se o fazendeiro está presente, está seguro
+            if (hasFarmer) {
+                return { error: false };
+            }
+
+            // Lobo sozinho com cordeiro
+            if (hasWolf && hasSheep && !hasHay) {
+                return {
+                    error: {
+                        message: '🐺💔🐑 O lobo comeu o cordeiro!',
+                        dangerChars: ['wolf', 'sheep'],
+                        dangerBank: bankName
+                    }
+                };
+            }
+
+            // Cordeiro sozinho com feno
+            if (hasSheep && hasHay && !hasWolf) {
+                return {
+                    error: {
+                        message: '🐑💔🌾 O cordeiro comeu o feno!',
+                        dangerChars: ['sheep', 'hay'],
+                        dangerBank: bankName
+                    }
+                };
+            }
+
+            return { error: false };
+        }
+
+        function showGameOver(message, dangerChars, dangerBank) {
+            // Renderizar o jogo com os personagens em perigo destacados
+            renderGame(dangerChars, dangerBank);
+            
+            // Mostrar mensagem de erro
+            showMessage(message, 'error');
+            
+            // Vibrar o dispositivo se disponível
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+            
+            // Atualizar modal
+            document.getElementById('modalMessage').textContent = message + ' Você precisa manter o fazendeiro presente para proteger os outros!';
+            
+            // Mostrar modal após um pequeno delay para o jogador ver a animação
+            setTimeout(() => {
+                document.getElementById('gameOverModal').classList.add('show');
+            }, 1000);
+        }
+
+        function closeModal() {
+            document.getElementById('gameOverModal').classList.remove('show');
+        }
+
+        function closeModalAndReset() {
+            closeModal();
+            resetGame();
+        }
+
+        function updateMessage() {
+            const farmerInBoat = gameState.boat.includes('farmer');
+            const boatOnLeft = gameState.boatPosition === 'left';
+            const currentBank = boatOnLeft ? gameState.leftBank : gameState.rightBank;
+            
+            if (!farmerInBoat && gameState.boat.length === 0) {
+                const bankName = boatOnLeft ? 'esquerda' : 'direita';
+                showMessage(`O barco está na margem ${bankName}. Clique no fazendeiro para colocá-lo no barco.`, 'info');
+            } else if (gameState.boat.length < 2) {
+                const bankName = boatOnLeft ? 'esquerda' : 'direita';
+                showMessage(`Barco na margem ${bankName}. Clique nos personagens para adicioná-los ao barco, depois clique em "Atravessar".`, 'info');
+            } else {
+                showMessage('Barco cheio! Clique em "Atravessar" para cruzar o rio.', 'info');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = 'message ' + type;
+        }
+
+        function celebrateVictory() {
+            // Desabilitar botão de atravessar
+            document.getElementById('crossBtn').disabled = true;
+            
+            // Mostrar mensagem de sucesso
+            showMessage('🎉 Parabéns! Você completou o jogo em ' + gameState.moves + ' movimentos!', 'success');
+            
+            // Adicionar animação aos personagens na margem direita
+            setTimeout(() => {
+                const rightBankEl = document.getElementById('rightBank');
+                rightBankEl.classList.add('celebrate');
+                
+                const characters = rightBankEl.querySelectorAll('.character');
+                characters.forEach((char, index) => {
+                    setTimeout(() => {
+                        char.classList.add('celebrate');
+                    }, index * 100);
+                });
+            }, 100);
+            
+            // Criar confetes
+            createConfetti();
+            
+            // Criar fogos de artifício
+            createFireworks();
+            
+            // Vibrar dispositivo (se disponível)
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100, 50, 200]);
+            }
+            
+            // Mostrar modal de vitória após animações
+            setTimeout(() => {
+                const movesText = gameState.moves === 1 ? 'movimento' : 'movimentos';
+                const message = `Você completou a travessia com sucesso em ${gameState.moves} ${movesText}! 🎊`;
+                
+                // Avaliar desempenho
+                let performance = '';
+                if (gameState.moves === 7) {
+                    performance = ' Perfeito! Você encontrou a solução ideal! ⭐';
+                } else if (gameState.moves <= 10) {
+                    performance = ' Excelente trabalho! 🏆';
+                } else if (gameState.moves <= 15) {
+                    performance = ' Muito bom! 👏';
+                } else {
+                    performance = ' Bom trabalho! Continue praticando! 💪';
+                }
+                
+                document.getElementById('victoryMessage').textContent = message + performance;
+                document.getElementById('victoryModal').classList.add('show');
+            }, 2000);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff7f00'];
+            const confettiCount = 150;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 20);
+            }
+        }
+
+        function createFireworks() {
+            const fireworkCount = 20;
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            
+            for (let i = 0; i < fireworkCount; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    
+                    for (let j = 0; j < 12; j++) {
+                        const firework = document.createElement('div');
+                        firework.className = 'fireworks';
+                        firework.style.left = x + 'px';
+                        firework.style.top = y + 'px';
+                        firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        
+                        const angle = (j * 30) * Math.PI / 180;
+                        const distance = 50 + Math.random() * 30;
+                        const dx = Math.cos(angle) * distance;
+                        const dy = Math.sin(angle) * distance;
+                        
+                        firework.style.setProperty('--dx', dx + 'px');
+                        firework.style.setProperty('--dy', dy + 'px');
+                        
+                        document.body.appendChild(firework);
+                        
+                        setTimeout(() => {
+                            firework.remove();
+                        }, 1000);
+                    }
+                }, i * 200);
+            }
+        }
+
+        function closeVictoryModal() {
+            document.getElementById('victoryModal').classList.remove('show');
+            // Limpar confetes e fogos restantes
+            document.querySelectorAll('.confetti, .fireworks').forEach(el => el.remove());
+        }
+
+        function closeVictoryModalAndReset() {
+            closeVictoryModal();
+            resetGame();
+        }
+
+        function resetGame() {
+            // Fechar modais se estiverem abertos
+            closeModal();
+            closeVictoryModal();
+            
+            // Limpar animações de celebração
+            const rightBankEl = document.getElementById('rightBank');
+            rightBankEl.classList.remove('celebrate');
+            rightBankEl.querySelectorAll('.character').forEach(char => {
+                char.classList.remove('celebrate');
+            });
+            
+            // Limpar confetes e fogos
+            document.querySelectorAll('.confetti, .fireworks').forEach(el => el.remove());
+            
+            gameState = {
+                leftBank: ['farmer', 'wolf', 'sheep', 'hay'],
+                rightBank: [],
+                boat: [],
+                boatPosition: 'left',
+                moves: 0
+            };
+            document.getElementById('crossBtn').disabled = false;
+            renderGame();
+            updateMessage();
+        }
+
+        // Fechar modal ao clicar fora dele
+        document.getElementById('gameOverModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('victoryModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeVictoryModal();
+            }
+        });
+
+        // Inicializar jogo
+        initGame();
+    </script>
+</body>
+</html>
