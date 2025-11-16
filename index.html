@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Fazendeiro, O Lobo, O Cordeiro e O Feno</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Partículas de fundo animadas */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-100px) translateX(50px) scale(1.5);
+                opacity: 0.8;
+            }
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        h1 {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3em;
+            margin-bottom: 60px;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .play-button {
+            position: relative;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            color: #667eea;
+            border: none;
+            padding: 25px 60px;
+            font-size: 1.8em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+                        0 0 0 0 rgba(255, 255, 255, 0.7),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.6s both, pulse 2s ease-in-out infinite 2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .play-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .play-button::after {
+            content: '🎮';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .play-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4),
+                        0 0 0 10px rgba(255, 255, 255, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            color: #764ba2;
+        }
+
+        .play-button:active {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3),
+                        0 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+
+        .play-button:hover::after {
+            transform: translateY(-50%) rotate(15deg) scale(1.2);
+        }
+
+        .play-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+                            0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+                            0 0 0 20px rgba(255, 255, 255, 0);
+            }
+        }
+
+        /* Efeito de brilho no hover */
+        .play-button:hover {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+        }
+
+        /* Animação de entrada do botão */
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(50px);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05) translateY(-10px);
+            }
+            70% {
+                transform: scale(0.95) translateY(0);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .play-button {
+            animation: fadeInUp 1s ease-out 0.6s both, 
+                       pulse 2s ease-in-out infinite 2s,
+                       bounceIn 1s ease-out 0.6s both;
+        }
+
+        /* Efeito de partículas ao clicar */
+        .click-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: explode 0.6s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(0) translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) translate(var(--tx), var(--ty));
+                opacity: 0;
+            }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+                margin-bottom: 40px;
+            }
+
+            .play-button {
+                padding: 20px 50px;
+                font-size: 1.4em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .play-button {
+                padding: 18px 40px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fundo -->
+    <div id="particles"></div>
+
+    <div class="container">
+        <h1>🌾 O Fazendeiro, O Lobo, O Cordeiro e O Feno 🌾</h1>
+        <p class="subtitle">Desafie sua lógica e ajude o fazendeiro na travessia!</p>
+        
+        <a href="jogar.html" class="play-button">
+            <span>Jogar Agora</span>
+        </a>
+    </div>
+
+    <script>
+        // Criar partículas de fundo
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Efeito de partículas ao clicar no botão
+        function createClickParticles(event) {
+            const button = event.currentTarget;
+            const rect = button.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'click-particle';
+                
+                const angle = (i * 30) * Math.PI / 180;
+                const distance = 50 + Math.random() * 30;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 600);
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            
+            const playButton = document.querySelector('.play-button');
+            playButton.addEventListener('click', createClickParticles);
+        });
+    </script>
+</body>
+</html>
+
